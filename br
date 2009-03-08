@@ -75,7 +75,7 @@ do
   mkfifo $jobpath/in/$host_idx
   mkfifo $jobpath/out/$host_idx
   # our remote worker
-  ssh $host "nc -l -p $port_out | sort -k$mapcolumn,$mapcolumn $reduce | nc -q0 -l -p $port_in" &
+  ssh $host "nc -q0 -l -p $port_out > /tmp/datain && cat /tmp/datain | sort -k$mapcolumn,$mapcolumn $reduce | nc -q0 -l -p $port_in && rm /tmp/datain" &
   # our local forwarders
   sleep 1 && nc -q0 $host $port_out < $jobpath/out/$host_idx &
   sleep 1 && nc $host $port_in > $jobpath/in/$host_idx &
